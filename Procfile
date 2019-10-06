@@ -1,1 +1,1 @@
-web: java -jar build/server/webapp-runner-*.jar build/libs/*.war
+web: cd build ; java -jar ../build/server/webapp-runner-8.5.11.3.jar --expand-war --port $PORT libs/*.war
