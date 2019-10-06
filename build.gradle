@@ -6,6 +6,27 @@ apply plugin: 'war'
 
 sourceCompatibility = 1.8
 
+task stage() {
+    dependsOn clean, war
+}
+war.mustRunAfter clean
+
+task copyToLib(type: Copy) {
+    into "$buildDir/server"
+    from(configurations.compile) {
+        include "webapp-runner*"
+    }
+}
+
+stage.dependsOn(copyToLib)
+
+gradle.taskGraph.whenReady {
+    taskGraph ->
+        if (taskGraph.hasTask(stage)) {
+            test.enabled = false
+        }
+}
+
 repositories {
     mavenCentral()
     mavenLocal()
@@ -51,6 +72,8 @@ dependencies {
     implementation "com.sun.xml.bind:jaxb-core:2.2.11"
     implementation "com.sun.xml.bind:jaxb-impl:2.2.11"
     implementation "javax.activation:activation:1.1.1"
+
+    compile 'com.github.jsimone:webapp-runner:8.5.11.3'
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
